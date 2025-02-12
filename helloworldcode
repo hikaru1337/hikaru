@@ -1,0 +1,54 @@
+// Интерфейс для базового приветствия
+interface Greeting {
+    void greet();
+}
+
+// Класс, реализующий интерфейс Greeting
+class HelloWorldGreeting implements Greeting {
+    @Override
+    public void greet() {
+        System.out.println("Hello, World!");
+    }
+}
+
+// Класс для вывода сообщения с задержкой
+class DelayedGreeting implements Runnable {
+    private final Greeting greeting;
+
+    public DelayedGreeting(Greeting greeting) {
+        this.greeting = greeting;
+    }
+
+    @Override
+    public void run() {
+        try {
+            Thread.sleep(2000); // задержка 2 секунды
+            greeting.greet();
+        } catch (InterruptedException e) {
+            System.out.println("Error occurred during delay");
+        }
+    }
+}
+
+// Класс с основной логикой
+public class HelloWorld {
+    public static void main(String[] args) {
+        // Создаем объект приветствия
+        Greeting greeting = new HelloWorldGreeting();
+        
+        // Создаем объект для задержки
+        DelayedGreeting delayedGreeting = new DelayedGreeting(greeting);
+        
+        // Запускаем поток, который вызывает приветствие с задержкой
+        Thread thread = new Thread(delayedGreeting);
+        thread.start();
+        
+        try {
+            thread.join(); // Ждем завершения потока
+        } catch (InterruptedException e) {
+            System.out.println("Error occurred while waiting for thread");
+        }
+        
+        System.out.println("Program completed.");
+    }
+}
